@@ -1,0 +1,12 @@
+{
+  "name": "api-juieri",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {"start": "node server.js"},
+  "dependencies": {
+    "fastify": "^4.26.0",
+    "@supabase/supabase-js": "^2.43.0",
+    "dotenv": "^16.4.5",
+    "@fastify/cors": "^9.0.1"
+  }
+}
