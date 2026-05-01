@@ -1,40 +1,40 @@
 require('dotenv').config()
 const fastify = require('fastify')({ logger: true })
-const cors = require('@fastify/cors')
-const { createClient } = require('@supabase/supabase-js')
 
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY)
-
-fastify.register(cors, { origin: true })
-
-fastify.addHook('onRequest', async (req, reply) => {
-  if (req.url.startsWith('/api/') && req.headers.authorization!== `Bearer ${process.env.JUERI_API_KEY}`) {
-    return reply.code(403).send({ error: 'API_KEY inválida' })
+// Rota do dashboard da Jueri
+fastify.get('/dashboard/geral', async (request, reply) => {
+  try {
+    const response = await fetch(`${process.env.ERP_API_URL}/api/dashboard/geral`, {
+      headers: { Authorization: `Bearer ${process.env.ERP_TOKEN}` }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`API Jueri retornou ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    reply.code(500).send({ 
+      erro: error.message,
+      detalhe: 'Falha ao buscar dados da Jueri'
+    });
   }
-})
+});
 
-fastify.post('/api/revendedoras', async (req, reply) => {
-  const { data, error } = await supabase.from('revendedoras').insert(req.body).select()
-  if (error) throw error
-  return data[0]
-})
+// Rota teste
+fastify.get('/', async () => {
+  return { status: 'API JUERI rodando' }
+});
 
-fastify.post('/api/pastas', async (req, reply) => {
-  const { data, error } = await supabase.from('pastas').insert(req.body).select()
-  if (error) throw error
-  return data[0]
-})
-
-fastify.post('/api/acertos', async (req, reply) => {
-  const { data, error } = await supabase.from('acertos').insert(req.body).select()
-  if (error) throw error
-  return data[0]
-})
-
-fastify.get('/api/dashboard', async (req, reply) => {
-  const { inicio, fim } = req.query
-  const { data, error } = await supabase.rpc('get_cards_dashboard', { inicio, fim })
-  if (error) throw error
+// Inicia servidor
+fastify.listen({ port: process.env.PORT || 3000, host: '0.0.0.0' }, (err) => {
+  if (err) {
+    fastify.log.error(err)
+    process.exit(1)
+  }
+  console.log('API JUERI no ar')
+})  if (error) throw error
   return data
 })
 
