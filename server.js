@@ -28,20 +28,6 @@ fastify.get('/', async () => {
 });
 
 // Inicia servidor
-fastify.listen({ port: process.env.PORT || 3000, host: '0.0.0.0' }, (err) => {
-  if (err) {
-    fastify.log.error(err)
-    process.exit(1)
-  }
-  console.log('API JUERI no ar')
-})  if (error) throw error
-  return data
-})
-
-fastify.get('/', async () => {
-  return { status: 'API JUERI rodando' }
-})
-
 const start = async () => {
   try {
     await fastify.listen({ port: process.env.PORT || 3000, host: '0.0.0.0' })
